@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 namespace HealthCheck
 {
     public class HealthCheck
-
     {
         private readonly HttpClient httpClient;
         private readonly JsonSerializerSettings jsonSerializerSettings;

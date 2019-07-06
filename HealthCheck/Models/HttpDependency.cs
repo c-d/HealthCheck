@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HealthCheck.Models
 {
-    public class HttpDependency
+    class HttpDependency
     {
         public string Url { get; set; }
         public string Name { get; set; }
