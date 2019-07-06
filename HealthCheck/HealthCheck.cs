@@ -93,10 +93,9 @@ namespace HealthCheck
         {
             if (!showDependencies)
             {
-                return null;
+                dependencies.Clear();
             }
-
-            if (failuresOnly) {
+            else if (failuresOnly) {
                 dependencies.RemoveAll(x => x.Available);
             }
 
