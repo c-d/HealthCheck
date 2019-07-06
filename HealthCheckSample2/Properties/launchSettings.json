@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HealthCheckSample2": {
+      "commandName": "Project",
+      "commandLineArgs": "host start --pause-on-error --port 5860"
+    }
+  }
+}
