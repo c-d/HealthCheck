@@ -14,17 +14,20 @@ namespace HealthCheck
     {
         private readonly HttpClient httpClient;
         private readonly JsonSerializerSettings jsonSerializerSettings;
+        private static List<HttpDependency> dependencies;
 
-        public HealthCheck(HttpClient httpClient)
+        public HealthCheck(HttpClient httpClient, string config)
         {
             this.httpClient = httpClient;
             jsonSerializerSettings = new JsonSerializerSettings()
              {
                  NullValueHandling = NullValueHandling.Ignore
              };
+
+            dependencies = JsonConvert.DeserializeObject<List<HttpDependency>>(config);
         }
 
-        public async Task<HttpResponseMessage> PerformHealthCheck(string serviceName, IList<HttpDependency> dependencies, bool showDependencies = true, bool failuresOnly = false)
+        public async Task<HttpResponseMessage> PerformHealthCheck(string serviceName, bool showDependencies = true, bool failuresOnly = false)
         {
             var dependencyResults = new List<HealthCheckResult>();
             foreach (var dependency in dependencies)

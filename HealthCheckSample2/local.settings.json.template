@@ -1,0 +1,21 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "Dependencies": "[
+        {
+          \"Name\": \"Wikipedia\",
+          \"Url\": \"https://wikipedia.org\"
+        },
+        {
+          \"Name\": \"Azure\",
+          \"Url\": \"https://azure.com\"
+        },
+        {
+          \"Name\": \"Argl-bargl\",
+          \"Url\": \"http://lasdaslsfdnsldgf.xyz\"
+        }
+      ]"
+  }
+}
