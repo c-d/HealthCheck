@@ -28,9 +28,9 @@ namespace HealthCheck
                 .AddEnvironmentVariables()
                 .Build();
             
-            var healthCheck = new HealthCheck(httpClient, config["Dependencies"]);
+            var healthCheck = new HealthChecker(httpClient, config["Dependencies"]);
 
-            return await healthCheck.PerformHealthCheck(serviceName);
+            return await healthCheck.GetHealthCheckHttpResponse(serviceName);
         }
     }
 }
