@@ -1,5 +1,6 @@
 ﻿using HealthCheck.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -15,7 +16,8 @@ namespace HealthCheck
         private readonly List<HttpService> httpServices;
         private readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings()
         {
-            NullValueHandling = NullValueHandling.Ignore
+            NullValueHandling = NullValueHandling.Ignore,
+            ContractResolver = new CamelCasePropertyNamesContractResolver()
         };
 
         public HealthChecker(string config)

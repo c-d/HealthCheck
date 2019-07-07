@@ -6,6 +6,9 @@ namespace HealthCheck.Models
 {
     public class HttpService
     {
+        public string Type { get => "HttpService"; }
+        //public string Id { get => $"{Name}-{Url}"; }
+
         public string Url { get; set; }
         public string Name { get; set; }
     }
