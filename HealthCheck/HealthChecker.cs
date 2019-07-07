@@ -11,25 +11,27 @@ namespace HealthCheck
 {
     public class HealthChecker
     {
-        private readonly HttpClient httpClient;
-        private readonly JsonSerializerSettings jsonSerializerSettings;
-        private static List<HttpService> dependencies;
-
-        public HealthChecker(HttpClient httpClient, string config)
+        private readonly HttpClient httpClient = new HttpClient();
+        private readonly List<HttpService> httpServices;
+        private readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings()
         {
-            this.httpClient = httpClient;
-            jsonSerializerSettings = new JsonSerializerSettings()
-             {
-                 NullValueHandling = NullValueHandling.Ignore
-             };
+            NullValueHandling = NullValueHandling.Ignore
+        };
 
-            dependencies = JsonConvert.DeserializeObject<List<HttpService>>(config);
+        public HealthChecker(string config)
+        {
+            httpServices = JsonConvert.DeserializeObject<List<HttpService>>(config);
+        }
+
+        public HealthChecker(List<HttpService> httpServices)
+        {
+            this.httpServices = httpServices;
         }
 
         public async Task<HealthCheckResult> GetHealthCheckResult(string serviceName, bool showDependencies = true, bool failuresOnly = false)
         {
             var dependencyResults = new List<HealthCheckResult>();
-            foreach (var dependency in dependencies)
+            foreach (var dependency in httpServices)
             {
                 dependencyResults.Add(await CheckHttpService(dependency));
             }

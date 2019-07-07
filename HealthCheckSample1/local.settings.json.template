@@ -2,20 +2,6 @@
     "IsEncrypted": false,
     "Values": {
       "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-      "FUNCTIONS_WORKER_RUNTIME": "dotnet",
-      "Dependencies": "[
-        {
-          \"Name\": \"Google\",
-          \"Url\": \"https://google.com\"
-        },
-        {
-          \"Name\": \"Azure\",
-          \"Url\": \"https://azure.com\"
-        },
-        {
-          \"Name\": \"HealthCheckSample2\",
-          \"Url\": \"http://localhost:5860/api/healthcheck\"
-        }
-      ]"
+      "FUNCTIONS_WORKER_RUNTIME": "dotnet"
     }
 }

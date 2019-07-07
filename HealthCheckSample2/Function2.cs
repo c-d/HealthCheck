@@ -5,14 +5,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
 using Microsoft.Extensions.Configuration;
+using HealthCheck;
 
 namespace HealthCheckSample2
 {
     public static class Function2
     {
         private static string serviceName = "MyService2";
-        // HttpClient should be a singleton
-        private static readonly HttpClient httpClient = new HttpClient();
 
         [FunctionName("Function2")]
         public static async Task<HttpResponseMessage> Run(
@@ -28,9 +27,9 @@ namespace HealthCheckSample2
                 .AddEnvironmentVariables()
                 .Build();
 
-            var healthCheck = new HealthCheck.HealthChecker(httpClient, config["Dependencies"]);
-
-            return await healthCheck.GetHealthCheckHttpResponse(serviceName, true, true);
+            // HealthChecker should be a singleton
+            var healthChecker = new HealthChecker(config["Dependencies"]);
+            return await healthChecker.GetHealthCheckHttpResponse(serviceName, true, false);
         }
     }
 }
