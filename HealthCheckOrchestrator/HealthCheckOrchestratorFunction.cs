@@ -10,8 +10,6 @@ namespace HealthCheckOrchestrator
 {
     public static class HealthCheckOrchestratorFunction
     {
-        // HttpClient should be a singleton
-        private static HttpClient httpClient = new HttpClient();
 
         [FunctionName("HealthCheckOrchestratorFunction")]
         public static void Run([TimerTrigger("0 */5 * * * *")]TimerInfo myTimer, ILogger log, ExecutionContext context)
@@ -24,7 +22,8 @@ namespace HealthCheckOrchestrator
                 .AddEnvironmentVariables()
                 .Build();
 
-            var healthChecker = new HealthChecker(httpClient, config["Services"]);
+            // Should be a singleton...
+            var healthChecker = new HealthChecker(config["Services"]);
             var healthCheckResults = healthChecker.GetHealthCheckResult("Orchestrator", true, false).Result.RequiredServices;
 
             foreach (var healthCheckResult in healthCheckResults)
