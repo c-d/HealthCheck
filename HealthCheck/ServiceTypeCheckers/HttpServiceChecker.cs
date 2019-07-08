@@ -25,7 +25,8 @@ namespace HealthCheck.ServiceTypeCheckers
 
             var result = new HealthCheckResult()
             {
-                Name = httpService.Name,
+                ServiceName = httpService.Name,
+                ServiceId = service.Id,
                 // To UTC?
                 TimeChecked = DateTime.Now
             };

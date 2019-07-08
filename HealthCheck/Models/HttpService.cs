@@ -8,8 +8,6 @@ namespace HealthCheck.Models
         [JsonProperty("type")]
         public override string Type { get => "HttpService"; }
 
-        //public string Id { get => $"{Name}-{Url}"; }
-
         [JsonProperty("url")]
         public string Url { get; set; }
     }

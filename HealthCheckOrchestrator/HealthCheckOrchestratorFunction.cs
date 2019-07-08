@@ -45,8 +45,9 @@ namespace HealthCheckOrchestrator
             foreach (var healthCheckResult in healthCheckResults.RequiredServices)
             {
                 var resultString = healthCheckResult.Available ? "up" : "down";
-                log.LogInformation($"{healthCheckResult.Name}: {resultString}");
+                log.LogInformation($"{healthCheckResult.ServiceName}: {resultString}");
 
+                //TODO: Only retain the last success + last failure for each service
                 await DocumentClient.CreateDocumentAsync(Config["Database_Collection_Link"], healthCheckResult);
             }
         }

@@ -48,7 +48,7 @@ namespace HealthCheck
 
             var healthCheckResult = new HealthCheckResult()
             {
-                Name = serviceName,
+                ServiceName = serviceName,
                 TimeChecked = DateTime.Now,
                 Available = allDependenciesAvailable,
                 Details = allDependenciesAvailable ? "Service available" : "A required service is unavailable.",
@@ -58,7 +58,7 @@ namespace HealthCheck
             return healthCheckResult;
         }
 
-        // This might be better located elsewhere...
+        // TODO: This might be better located elsewhere...
         public async Task<HttpResponseMessage> GetHealthCheckHttpResponse(string serviceName, bool showDependencies = true, bool failuresOnly = false)
         {
             var healthCheckResult = await GetHealthCheckResult(serviceName, showDependencies, failuresOnly);
