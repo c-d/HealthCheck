@@ -1,4 +1,5 @@
 ﻿using HealthCheck.Models;
+using HealthCheck.ServiceTypeCheckers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -12,7 +13,7 @@ namespace HealthCheck
 {
     public class HealthChecker
     {
-        private readonly HttpClient httpClient = new HttpClient();
+        private readonly HttpServiceChecker httpServiceChecker;
         private readonly List<HttpService> httpServices;
         private readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings()
         {
@@ -22,20 +23,24 @@ namespace HealthCheck
 
         public HealthChecker(string config)
         {
+            // Some additional work to be done to create different service checkers and 
+            // provide a mapping between services and service checkers.
             httpServices = JsonConvert.DeserializeObject<List<HttpService>>(config);
+            httpServiceChecker = new HttpServiceChecker(new HttpClient());
         }
 
         public HealthChecker(List<HttpService> httpServices)
         {
             this.httpServices = httpServices;
+            httpServiceChecker = new HttpServiceChecker(new HttpClient());
         }
 
         public async Task<HealthCheckResult> GetHealthCheckResult(string serviceName, bool showDependencies = true, bool failuresOnly = false)
         {
             var dependencyResults = new List<HealthCheckResult>();
-            foreach (var dependency in httpServices)
+            foreach (var service in httpServices)
             {
-                dependencyResults.Add(await CheckHttpService(dependency));
+                dependencyResults.Add(await httpServiceChecker.CheckService(service));
             }
 
             var allDependenciesAvailable = dependencyResults.TrueForAll(x => x.Available);
@@ -44,6 +49,7 @@ namespace HealthCheck
             var healthCheckResult = new HealthCheckResult()
             {
                 Name = serviceName,
+                TimeChecked = DateTime.Now,
                 Available = allDependenciesAvailable,
                 Details = allDependenciesAvailable ? "Service available" : "A required service is unavailable.",
                 RequiredServices = dependencyResults
@@ -65,42 +71,7 @@ namespace HealthCheck
                     "application/json")
             };
         }
-
-        private async Task<HealthCheckResult> CheckHttpService(HttpService service)
-        {
-            var result = new HealthCheckResult()
-            {
-                Name = service.Name
-            };
-
-            try
-            {
-                HttpResponseMessage response = null;
-                using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, service.Url))
-                {
-                    response = await httpClient.SendAsync(requestMessage);
-                }
-                
-                result.Available = response.StatusCode == HttpStatusCode.OK;
-                
-                if (!result.Available)
-                {
-                    // If we can't parse it into a HealthCheckResult, it will be treated like any other unknown exception in the catch below
-                    var healthCheckResult = JsonConvert.DeserializeObject<HealthCheckResult>(await response.Content.ReadAsStringAsync());
-
-                    result.Available = healthCheckResult.Available;
-                    result.Details = healthCheckResult.Details;
-                    result.RequiredServices = healthCheckResult.RequiredServices;
-                }
-            }
-            catch (Exception)
-            {
-                result.Available = false;
-                result.Details = "An error occurred while attempting to call the service.";
-            }
-
-            return result;
-        }
+        
 
         private List<HealthCheckResult> FilterDependencies(List<HealthCheckResult> dependencies, bool showDependencies, bool failuresOnly)
         {
