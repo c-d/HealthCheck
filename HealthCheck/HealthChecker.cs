@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace HealthCheck
 {
-    public class HealthChecker
+    public class HealthChecker : IHealthChecker
     {
         private readonly HttpServiceChecker httpServiceChecker;
         private readonly List<HttpService> httpServices;
@@ -58,6 +58,7 @@ namespace HealthCheck
             return healthCheckResult;
         }
 
+        // This might be better located elsewhere...
         public async Task<HttpResponseMessage> GetHealthCheckHttpResponse(string serviceName, bool showDependencies = true, bool failuresOnly = false)
         {
             var healthCheckResult = await GetHealthCheckResult(serviceName, showDependencies, failuresOnly);
