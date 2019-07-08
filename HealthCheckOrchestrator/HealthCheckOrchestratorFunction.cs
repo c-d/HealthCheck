@@ -41,6 +41,8 @@ namespace HealthCheckOrchestrator
                 //TODO: Update stored healthcheck results for each service.
                 var resultString = healthCheckResult.Available ? "up" : "down";
                 log.LogInformation($"{healthCheckResult.Name}: {resultString}");
+
+                dbClient.CreateDocumentAsync(CollectionLink, healthCheckResult);
             }
         }
 
