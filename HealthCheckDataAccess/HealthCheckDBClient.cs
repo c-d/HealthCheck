@@ -7,6 +7,7 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace HealthCheckDataAccess
 {
@@ -66,6 +67,7 @@ namespace HealthCheckDataAccess
             }
         }
 
+        // TODO: Refactor this, re-use GetServices()
         public HealthChecker CreateHealthChecker()
         {
             var services = DocumentClient.CreateDocumentQuery<HttpService>(DatabaseCollectionLink)
@@ -80,6 +82,29 @@ namespace HealthCheckDataAccess
         {
             //TODO: Only retain the last success + last failure for each service
             await DocumentClient.CreateDocumentAsync(DatabaseCollectionLink, healthCheckResult);
+        }
+
+        public async Task<IEnumerable<HealthCheckResult>> GetHealthCheckResults(string serviceId = null)
+        {
+            var baseQuery = DocumentClient.CreateDocumentQuery<HealthCheckResult>(DatabaseCollectionLink);
+            var query = (serviceId != null)
+                ? baseQuery.Where(x => x.ServiceId == serviceId)
+                // Lazy way of determining if this is a healthCheckResult type or not... should add documentType
+                : baseQuery.Where(x => x.ServiceId != null);
+
+            var healthCheckResults = query.AsEnumerable().ToList();
+
+            return healthCheckResults;
+        }
+
+        public async Task<IEnumerable<HttpService>> GetServices()
+        {
+            var services = DocumentClient.CreateDocumentQuery<HttpService>(DatabaseCollectionLink)
+                .Where(x => x.ServiceType == "HttpService")
+                .AsEnumerable()
+                .ToList();
+
+            return services;
         }
     }
 }
