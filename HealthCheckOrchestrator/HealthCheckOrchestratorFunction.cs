@@ -23,6 +23,7 @@ namespace HealthCheckOrchestrator
         private readonly IDocumentClient DocumentClient;
         private readonly IHealthChecker HealthChecker;
         private readonly IConfigurationRoot Config;
+        private readonly string CollectionLink;
         
         public HealthCheckOrchestratorFunction(
             IDocumentClient documentClient, 
@@ -32,6 +33,7 @@ namespace HealthCheckOrchestrator
             DocumentClient = documentClient;
             HealthChecker = healthChecker;
             Config = config;
+            CollectionLink = Config["Database_Collection_Link"];
         }
         
 
@@ -48,7 +50,7 @@ namespace HealthCheckOrchestrator
                 log.LogInformation($"{healthCheckResult.ServiceName}: {resultString}");
 
                 //TODO: Only retain the last success + last failure for each service
-                await DocumentClient.CreateDocumentAsync(Config["Database_Collection_Link"], healthCheckResult);
+                await DocumentClient.CreateDocumentAsync(CollectionLink, healthCheckResult);
             }
         }
     }

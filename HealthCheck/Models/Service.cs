@@ -11,7 +11,7 @@ namespace HealthCheck.Models
         [JsonProperty("name")]
         public string Name { get; set; }
 
-        [JsonProperty("type")]
-        public abstract string Type { get; }
+        [JsonProperty("serviceType")]
+        public abstract string ServiceType { get; }
     }
 }

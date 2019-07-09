@@ -22,8 +22,6 @@ namespace HealthCheckOrchestrator
 {
     public class Startup : IWebJobsStartup
     {
-        private IServiceProvider _serviceProvider;
-
         
         public void Configure(IWebJobsBuilder builder)
         {
@@ -63,7 +61,7 @@ namespace HealthCheckOrchestrator
             foreach (var service in httpServicesFromConfig)
             {
                 var docExists = dbClient.CreateDocumentQuery<HttpService>(config["Database_Collection_Link"])
-                    .Where(x => x.Type == "HttpService" && x.Name == service.Name && x.Url == service.Url)
+                    .Where(x => x.ServiceType == "HttpService" && x.Name == service.Name && x.Url == service.Url)
                     .AsEnumerable()
                     .Any();
 
@@ -81,7 +79,7 @@ namespace HealthCheckOrchestrator
             // By now the DB should have been populated with dependency definitions
             // Read those out (plus any other services defined in the DB) to create the healthchecker 
             var services = dbClient.CreateDocumentQuery<HttpService>(config["Database_Collection_Link"])
-                .Where(x => x.Type == "HttpService")
+                .Where(x => x.ServiceType == "HttpService")
                 .AsEnumerable()
                 .ToList();
 
