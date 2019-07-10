@@ -92,7 +92,11 @@ namespace HealthCheckDataAccess
                 // Lazy way of determining if this is a healthCheckResult type or not... should add documentType
                 : baseQuery.Where(x => x.ServiceId != null);
 
-            var healthCheckResults = query.AsEnumerable().ToList();
+            var healthCheckResults = query
+                .AsEnumerable()
+                .ToList()
+                .OrderBy(x => x.TimeChecked)
+                .Reverse();
 
             return healthCheckResults;
         }

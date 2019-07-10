@@ -67,7 +67,7 @@ namespace HealthCheckUI
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=ServiceResults}/{action=Index}/{id?}");
             });
         }
     }

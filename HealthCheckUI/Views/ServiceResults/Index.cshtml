@@ -1,0 +1,41 @@
+﻿@model IEnumerable<HealthCheckUI.Models.ServiceResults>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Service Name</th>
+            <th>URL</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.HttpService.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HttpService.Url)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.ActionLink("View History", "Details", "HealthCheckResult", new { id = item.HttpService.Id })
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>

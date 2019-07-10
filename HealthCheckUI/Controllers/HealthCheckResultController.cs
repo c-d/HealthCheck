@@ -17,10 +17,17 @@ namespace HealthCheckUI.Controllers
         }
 
         [ActionName("Index")]
-        public async Task<IActionResult> Index()
+        public async Task<ActionResult> Index()
         {
             var healthCheckResults = await DBClient.GetHealthCheckResults();
             return View(healthCheckResults);
+        }
+
+        [ActionName("Details")]
+        public async Task<ActionResult> Details(string id)
+        {
+            var healthCheckResults = await DBClient.GetHealthCheckResults(id);
+            return View("Index", healthCheckResults);
         }
     }
 }
