@@ -11,9 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HealthCheckSample2", "Healt
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HealthCheckOrchestrator", "HealthCheckOrchestrator\HealthCheckOrchestrator.csproj", "{7536D3DA-F78F-4DA0-8571-6D7C56315CF0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthCheckUI", "HealthCheckUI\HealthCheckUI.csproj", "{E7BB0223-3ACF-434D-9C64-D623CDD67250}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HealthCheckUI", "HealthCheckUI\HealthCheckUI.csproj", "{E7BB0223-3ACF-434D-9C64-D623CDD67250}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthCheckDataAccess", "HealthCheckDataAccess\HealthCheckDataAccess.csproj", "{9FF952CA-BEC5-46A9-A24A-B8DB782F80B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HealthCheckDataAccess", "HealthCheckDataAccess\HealthCheckDataAccess.csproj", "{9FF952CA-BEC5-46A9-A24A-B8DB782F80B0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthCheckApi", "HealthCheckApi\HealthCheckApi.csproj", "{04E72F63-472E-41C2-8EE5-0A93A32D1685}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{9FF952CA-BEC5-46A9-A24A-B8DB782F80B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9FF952CA-BEC5-46A9-A24A-B8DB782F80B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9FF952CA-BEC5-46A9-A24A-B8DB782F80B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04E72F63-472E-41C2-8EE5-0A93A32D1685}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04E72F63-472E-41C2-8EE5-0A93A32D1685}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04E72F63-472E-41C2-8EE5-0A93A32D1685}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04E72F63-472E-41C2-8EE5-0A93A32D1685}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -44,12 +44,12 @@ namespace HealthCheckDataAccess
             DatabaseCollectionLink = UriFactory.CreateDocumentCollectionUri(DatabaseName, DatabaseCollectionName).ToString();
 
             // Create DB if not existing
-            var database = DocumentClient.CreateDatabaseIfNotExistsAsync(new Database() { Id = DatabaseName });
+            var database = DocumentClient.CreateDatabaseIfNotExistsAsync(new Database() { Id = DatabaseName }).Result;
 
             // Create collection if not existing
             var collection = DocumentClient.CreateDocumentCollectionIfNotExistsAsync(
                 UriFactory.CreateDatabaseUri(DatabaseName),
-                new DocumentCollection { Id = DatabaseCollectionName });
+                new DocumentCollection { Id = DatabaseCollectionName }).Result;
 
             // Populate collection with service definitions if not existing
             var httpServicesFromConfig = JsonConvert.DeserializeObject<List<HttpService>>(serviceConfig);
@@ -101,12 +101,27 @@ namespace HealthCheckDataAccess
             return healthCheckResults;
         }
 
-        public async Task<IEnumerable<HttpService>> GetServices()
+        public async Task<IEnumerable<HttpService>> GetServices(string serviceName = null)
         {
-            var services = DocumentClient.CreateDocumentQuery<HttpService>(DatabaseCollectionLink)
-                .Where(x => x.ServiceType == "HttpService")
-                .AsEnumerable()
-                .ToList();
+            var query = DocumentClient.CreateDocumentQuery<HttpService>(DatabaseCollectionLink)
+                .Where(x => x.ServiceType == "HttpService");
+
+            if (serviceName != null)
+            {
+                // TODO: Protect against injection
+                query = query.Where(x => x.Name == serviceName);
+            }
+
+            var services = query.AsEnumerable().ToList();
+
+            foreach (var service in services)
+            {
+                var lastHealthCheckResult = (await GetHealthCheckResults(service.Id)).First();
+                service.Status = lastHealthCheckResult.Available ? "Available" : lastHealthCheckResult.Details;
+                // Also include
+                // - time since last available
+                // - time since last offline
+            }
 
             return services;
         }
