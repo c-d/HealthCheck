@@ -84,11 +84,11 @@ namespace HealthCheckDataAccess
             await DocumentClient.CreateDocumentAsync(DatabaseCollectionLink, healthCheckResult);
         }
 
-        public async Task<IEnumerable<HealthCheckResult>> GetHealthCheckResults(string serviceId = null)
+        public async Task<IEnumerable<HealthCheckResult>> GetHealthCheckResults(string serviceName = null)
         {
             var baseQuery = DocumentClient.CreateDocumentQuery<HealthCheckResult>(DatabaseCollectionLink);
-            var query = (serviceId != null)
-                ? baseQuery.Where(x => x.ServiceId == serviceId)
+            var query = (serviceName != null)
+                ? baseQuery.Where(x => x.ServiceName == serviceName)
                 // Lazy way of determining if this is a healthCheckResult type or not... should add documentType
                 : baseQuery.Where(x => x.ServiceId != null);
 
@@ -101,7 +101,7 @@ namespace HealthCheckDataAccess
             return healthCheckResults;
         }
 
-        public async Task<IEnumerable<HttpService>> GetServices(string serviceName = null)
+        public async Task<IEnumerable<HttpService>> GetServices(bool fullDetails, string serviceName = null)
         {
             var query = DocumentClient.CreateDocumentQuery<HttpService>(DatabaseCollectionLink)
                 .Where(x => x.ServiceType == "HttpService");
@@ -116,7 +116,7 @@ namespace HealthCheckDataAccess
 
             foreach (var service in services)
             {
-                var lastHealthCheckResult = (await GetHealthCheckResults(service.Id)).First();
+                var lastHealthCheckResult = (await GetHealthCheckResults(service.Name)).First();
                 service.Status = lastHealthCheckResult.Available ? "Available" : lastHealthCheckResult.Details;
                 // Also include
                 // - time since last available

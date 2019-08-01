@@ -12,12 +12,12 @@ using HealthCheck;
 
 namespace HealthCheckApi
 {
-    public class HealthCheckFunction
+    public class ServiceFunction
     {
         private readonly IHealthCheckDBClient DBClient;
         private readonly IHealthChecker HealthChecker;
 
-        public HealthCheckFunction(
+        public ServiceFunction(
             IHealthCheckDBClient dbClient,
             IHealthChecker healthChecker)
         {
@@ -25,13 +25,15 @@ namespace HealthCheckApi
             HealthChecker = healthChecker;
         }
 
-        [FunctionName("GetHealthCheckDetails")]
+        [FunctionName("GetServices")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "services/{serviceName}/healthchecks")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "services/{serviceName?}")] HttpRequest req,
             string serviceName,
             ILogger log)
         {
-            var results = await DBClient.GetHealthCheckResults(serviceName);
+            var includeFullDetails = req.Query.ContainsKey("expanded");
+
+            var results = await DBClient.GetServices(includeFullDetails, serviceName);
 
             return new OkObjectResult(results);
         }

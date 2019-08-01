@@ -12,7 +12,7 @@ namespace HealthCheckDataAccess
     {
         HealthChecker CreateHealthChecker();
         void SaveHealthCheckResult(HealthCheckResult healthCheckResult);
-        Task<IEnumerable<HttpService>> GetServices(string serviceName = null);
-        Task<IEnumerable<HealthCheckResult>> GetHealthCheckResults(string serviceId = null);
+        Task<IEnumerable<HttpService>> GetServices(bool fullDetails, string serviceName = null);
+        Task<IEnumerable<HealthCheckResult>> GetHealthCheckResults(string serviceName = null);
     }
 }
