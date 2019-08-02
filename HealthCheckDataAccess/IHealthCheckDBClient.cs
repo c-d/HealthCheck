@@ -14,5 +14,6 @@ namespace HealthCheckDataAccess
         void SaveHealthCheckResult(HealthCheckResult healthCheckResult);
         Task<IEnumerable<HttpService>> GetServices(bool fullDetails, string serviceName = null);
         Task<IEnumerable<HealthCheckResult>> GetHealthCheckResults(string serviceName = null);
+        Task<IEnumerable<HealthCheckResult>> GetHealthCheckResults(int limit, string serviceName = null);
     }
 }

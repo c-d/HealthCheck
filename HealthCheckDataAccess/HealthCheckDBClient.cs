@@ -15,12 +15,13 @@ namespace HealthCheckDataAccess
     {
         private DocumentClient DocumentClient;
 
-        private string DatabaseUrl;
+        private readonly string DatabaseUrl;
         private string DatabaseName;
         private string DatabaseCollectionName;
-        private string DatabaseKey;
+        private readonly string DatabaseKey;
 
         private string DatabaseCollectionLink;
+        private readonly int HealthCheckLimitDefault = 100;
 
         public HealthCheckDBClient(string dbUrl, string dbName, string dbCollectionName, string dbKey, string serviceConfig)
         {
@@ -86,33 +87,49 @@ namespace HealthCheckDataAccess
 
         public async Task<IEnumerable<HealthCheckResult>> GetHealthCheckResults(string serviceName = null)
         {
-            var baseQuery = DocumentClient.CreateDocumentQuery<HealthCheckResult>(DatabaseCollectionLink);
-            var query = (serviceName != null)
-                ? baseQuery.Where(x => x.ServiceName == serviceName)
-                // Lazy way of determining if this is a healthCheckResult type or not... should add documentType
-                : baseQuery.Where(x => x.ServiceId != null);
+            return await GetHealthCheckResults(HealthCheckLimitDefault, serviceName);
+        }
 
-            var healthCheckResults = query
+        public async Task<IEnumerable<HealthCheckResult>> GetHealthCheckResults(int limit, string serviceName = null)
+        {
+            var sqlQuery = "SELECT TOP @limit * FROM s WHERE (s.serviceId != null)";
+            var sqlParams = new SqlParameterCollection
+            {
+                new SqlParameter("@limit", limit)
+            };
+
+            if (serviceName != null)
+            {
+                sqlQuery += " AND (s.serviceName = @name)";
+                sqlParams.Add(new SqlParameter("@name", serviceName));
+            }
+            sqlQuery += " ORDER BY s.timeChecked DESC";
+
+            var querySpec = new SqlQuerySpec(sqlQuery, sqlParams);            
+            var healthCheckResults = Task.Run(() => DocumentClient
+                .CreateDocumentQuery<HealthCheckResult>(DatabaseCollectionLink, querySpec)
                 .AsEnumerable()
-                .ToList()
-                .OrderBy(x => x.TimeChecked)
-                .Reverse();
+                .ToList());
 
-            return healthCheckResults;
+            return await healthCheckResults;
         }
 
         public async Task<IEnumerable<HttpService>> GetServices(bool fullDetails, string serviceName = null)
         {
-            var query = DocumentClient.CreateDocumentQuery<HttpService>(DatabaseCollectionLink)
-                .Where(x => x.ServiceType == "HttpService");
-
+            var sqlQuery = "SELECT * FROM s WHERE (s.serviceType = 'HttpService')";
+            var sqlParams = new SqlParameterCollection();
+            
             if (serviceName != null)
             {
-                // TODO: Protect against injection
-                query = query.Where(x => x.Name == serviceName);
+                sqlQuery += " AND (s.name = @name)";
+                sqlParams.Add(new SqlParameter("@name", serviceName));
             }
 
-            var services = query.AsEnumerable().ToList();
+            var querySpec = new SqlQuerySpec(sqlQuery, sqlParams);
+            var services = DocumentClient
+                .CreateDocumentQuery<HttpService>(DatabaseCollectionLink, querySpec)
+                .AsEnumerable()
+                .ToList();
 
             foreach (var service in services)
             {
